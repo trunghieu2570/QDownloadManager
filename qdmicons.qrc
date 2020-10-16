@@ -1,0 +1,7 @@
+<!DOCTYPE RCC><RCC version="1.0">
+<qresource prefix="icons/qdm">
+    <file alias="index.theme">icons/qdm/index.theme</file>
+    <file alias="48x48/document-new.png">icons/qdm/48x48/document-new.png</file>
+ 
+</qresource>
+</RCC>

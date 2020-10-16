@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/icons8_add_48px.png</file>
+        <file>icons/icons8_alarm_clock_48px.png</file>
+        <file>icons/icons8_cancel_48px.png</file>
+        <file>icons/icons8_pause_button_48px.png</file>
+        <file>icons/icons8_play_button_circled_48px.png</file>
+        <file>icons/icons8_remove_48px.png</file>
+        <file>icons/icons8_resume_button_48px.png</file>
+        <file>icons/icons8_settings_48px.png</file>
+    </qresource>
+</RCC>
