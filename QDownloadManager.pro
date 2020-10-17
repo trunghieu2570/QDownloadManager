@@ -10,13 +10,19 @@ CONFIG += c++11
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    newdldialog.cpp \
+    optionsdialog.cpp
 
 HEADERS += \
-    mainwindow.h
+    mainwindow.h \
+    newdldialog.h \
+    optionsdialog.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    newdldialog.ui \
+    optionsdialog.ui
 
 TRANSLATIONS += \
     QDownloadManager_en_US.ts

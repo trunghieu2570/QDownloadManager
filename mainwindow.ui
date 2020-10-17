@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>QDownloadManager</string>
+   <string>QDM - Parallel Download Manager</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -514,7 +514,7 @@ width: 10px;
                <bool>false</bool>
               </attribute>
               <attribute name="verticalHeaderDefaultSectionSize">
-               <number>24</number>
+               <number>26</number>
               </attribute>
               <row>
                <property name="text">
@@ -574,7 +574,7 @@ width: 10px;
      <x>0</x>
      <y>0</y>
      <width>998</width>
-     <height>25</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
