@@ -7,6 +7,10 @@
 #include "optionsdialog.h"
 #include "downloadmanager.h"
 #include "paralleldownload.h"
+#include "downloadmodel.h"
+#include "segmentmodel.h"
+#include <QProgressBar>
+#include <QRandomGenerator>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -20,6 +24,8 @@ class MainWindow : public QMainWindow
 private:
     DownloadManager *downloadManager;
     BaseDownload *currentDownload = nullptr;
+    DownloadModel * downloadModel;
+    SegmentModel * segmentModel;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
@@ -30,7 +36,6 @@ private slots:
     void openAddURLDialog();
     void openOptionsDialog();
     void quitApplication();
-    void downloadTableSelected();
     void downloadListSelectionChanged(QItemSelection selected, QItemSelection deselected);
 
 private:

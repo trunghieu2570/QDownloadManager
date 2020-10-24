@@ -11,22 +11,26 @@ class ParallelDownload : public BaseDownload
 {
     Q_OBJECT
 private:
-    QList<Segment*> * segmentList;
+    QList<Segment*> segmentList;
     QFile *file;
-    qint64 size;
     int max = 8;
+    //qint64 downloadedSize;
     RemoteFileInfo *fileInfo;
     void generateSegments();
     void downloadSegments();
     void prepare();
 public:
     explicit ParallelDownload(QObject *parent = nullptr);
-    qint64 getSize();
     //ParellelDownload();
+    DownloadType getType() const;
+    QList<Segment *> getSegmentList();
+    qint64 getDownloadedSize() const;
+    qint64 getSize() const;
 public slots:
     void start();
     void stop();
     void pause();
+    void emitDownloadProgressChange();
 private slots:
     void getInfoFinished();
 signals:

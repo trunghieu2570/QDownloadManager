@@ -4,7 +4,6 @@ DownloadManager *DownloadManager::instance = 0;
 
 DownloadManager::DownloadManager(QObject *parent) : QObject(parent)
 {
-    downloadList = new QList<BaseDownload*>();
 }
 
 void DownloadManager::startAll()
@@ -22,15 +21,20 @@ void DownloadManager::pauseAll()
 
 }
 
-QList<BaseDownload *> *DownloadManager::getDownloadList() const
+QList<BaseDownload *> DownloadManager::getDownloadList()
 {
-    return downloadList;
+    return instance->downloadList;
 }
 
 DownloadManager *DownloadManager::getInstance()
 {
     if(!instance) {
-        instance = new DownloadManager();
+        instance = new DownloadManager;
     }
     return instance;
+}
+
+void DownloadManager::addDownload(BaseDownload *dl)
+{
+    downloadList.append(dl);
 }

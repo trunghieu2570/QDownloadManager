@@ -14,6 +14,7 @@ class NewDLDialog : public QDialog
 public:
     explicit NewDLDialog(QWidget *parent = nullptr);
     ~NewDLDialog();
+    QString getUrl();
 
 private:
     Ui::NewDLDialog *ui;

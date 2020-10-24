@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QUrl>
 #include "downloadstate.h"
+#include "downloadtype.h"
 
 class BaseDownload : public QObject
 {
@@ -15,13 +16,16 @@ protected:
     QString saveLocation;
     DownloadState state;
     QString desciption;
+    qint64 size;
 public:
-    virtual qint64 getSize() = 0;
-    virtual QString getName();
-    virtual QUrl getAddress();
-    virtual QString getSaveLocation();
-    virtual DownloadState getCurrentState();
-    virtual QString getDescription();
+    virtual qint64 getSize() const = 0;
+    virtual qint64 getDownloadedSize() const = 0;
+    virtual DownloadType getType() const = 0;
+    virtual QString getName() const;
+    virtual QUrl getAddress() const;
+    virtual QString getSaveLocation() const;
+    virtual DownloadState getCurrentState() const;
+    virtual QString getDescription() const;
     virtual void start() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;

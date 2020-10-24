@@ -2,6 +2,7 @@
 #define DOWNLOADMODEL_H
 
 #include "basedownload.h"
+#include "downloadmanager.h"
 
 #include <QAbstractItemModel>
 #include <QObject>
@@ -11,9 +12,10 @@ enum class DownloadTableColumns {
     QUEUE_NAME = 1,
     SIZE = 2,
     STATUS = 3,
-    TRANSFER_RATE = 4,
-    LAST_TIME = 5,
-    DESCRIPTION = 6
+    DOWNLOADED = 4,
+    TRANSFER_RATE = 5,
+    LAST_TIME = 6,
+    DESCRIPTION = 7
 };
 
 class DownloadModel : public QAbstractListModel
@@ -24,10 +26,12 @@ public:
     int rowCount(const QModelIndex& parent = QModelIndex()) const;
     int columnCount(const QModelIndex& parent = QModelIndex()) const;
     QVariant data(const QModelIndex &index, int role) const;
+    QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 public slots:
     void populate();
+    void update();
 private:
-    QList<BaseDownload*> list;
+    DownloadManager *dm = nullptr;
 signals:
 
 };

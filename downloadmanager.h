@@ -8,11 +8,12 @@ class DownloadManager : public QObject
 {
     Q_OBJECT
 public: 
-    QList<BaseDownload *> *getDownloadList() const;
+    QList<BaseDownload *> getDownloadList();
     static DownloadManager *getInstance();
+    void addDownload(BaseDownload *dl);
 private:
     explicit DownloadManager(QObject *parent = nullptr);
-    QList<BaseDownload *> *downloadList;
+    QList<BaseDownload *> downloadList;
     static DownloadManager *instance;
 public slots:
     void startAll();

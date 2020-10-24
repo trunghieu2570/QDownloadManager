@@ -30,27 +30,27 @@ void BaseDownload::setName(const QString &value)
     name = value;
 }
 
-QString BaseDownload::getName()
+QString BaseDownload::getName() const
 {
     return name;
 }
 
-QUrl BaseDownload::getAddress()
+QUrl BaseDownload::getAddress() const
 {
     return address;
 }
 
-QString BaseDownload::getSaveLocation()
+QString BaseDownload::getSaveLocation() const
 {
     return saveLocation;
 }
 
-DownloadState BaseDownload::getCurrentState()
+DownloadState BaseDownload::getCurrentState() const
 {
     return state;
 }
 
-QString BaseDownload::getDescription()
+QString BaseDownload::getDescription() const
 {
     return desciption;
 }

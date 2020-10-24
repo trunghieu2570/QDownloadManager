@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>669</width>
-    <height>178</height>
+    <height>222</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -44,7 +44,11 @@
         </widget>
        </item>
        <item>
-        <widget class="QLineEdit" name="lineEdit"/>
+        <widget class="QLineEdit" name="lineEdit">
+         <property name="text">
+          <string>https://download.virtualbox.org/virtualbox/6.1.14/VirtualBox-6.1.14-140239-Win.exe</string>
+         </property>
+        </widget>
        </item>
       </layout>
      </item>

@@ -18,19 +18,22 @@ SOURCES += \
     optionsdialog.cpp \
     paralleldownload.cpp \
     remotefileinfo.cpp \
-    segment.cpp
+    segment.cpp \
+    segmentmodel.cpp
 
 HEADERS += \
     basedownload.h \
     downloadmanager.h \
     downloadmodel.h \
     downloadstate.h \
+    downloadtype.h \
     mainwindow.h \
     newdldialog.h \
     optionsdialog.h \
     paralleldownload.h \
     remotefileinfo.h \
     segment.h \
+    segmentmodel.h \
     segmentstate.h
 
 FORMS += \
