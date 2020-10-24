@@ -71,5 +71,5 @@ void SegmentModel::populate(ParallelDownload *pdl)
 void SegmentModel::update()
 {
     emit dataChanged(createIndex(0,0), createIndex(dl->getSegmentList().size(), columnCount()));
-    emit layoutChanged();
+    //emit layoutChanged();
 }

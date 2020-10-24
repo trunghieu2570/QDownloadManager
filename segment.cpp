@@ -62,7 +62,7 @@ void Segment::downloadFinished(QNetworkReply *data)
 void Segment::downloadProgress(qint64 rev, qint64 total)
 {
     //qDebug() << "progress:" << file->fileName() << rev << total;
-    this->total = total;
+    //this->total = total;
     this->received = rev;
     emit stateChanged();
     emit segmentProgressChanged(rev, total);

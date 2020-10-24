@@ -50,7 +50,7 @@ void MainWindow::openAddURLDialog()
         dl->setAddress(url);
         dl->setName(QString("file").append(QString::number(QRandomGenerator::global()->generate())).append(".exe"));
         downloadManager->addDownload(dl);
-        connect(dl, &BaseDownload::stateChanged, downloadModel, &DownloadModel::update);
+        downloadModel->populate();
         dl->start();
     }
 }

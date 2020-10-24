@@ -21,6 +21,7 @@ QVariant DownloadModel::data(const QModelIndex &index, int role) const
     if ( role == Qt::DisplayRole)
     {
         auto base = dm->getDownloadList().at(index.row());
+        connect(base, &BaseDownload::stateChanged, this, &DownloadModel::update);
         if ( index.column() == (int)DownloadTableColumns::FILE_NAME)
             return base->getName();
         if ( index.column() == (int)DownloadTableColumns::QUEUE_NAME)
@@ -96,5 +97,5 @@ void DownloadModel::populate()
 void DownloadModel::update()
 {
     emit dataChanged(createIndex(0,0), createIndex(dm->getDownloadList().size(), columnCount()));
-    emit layoutChanged();
+    //emit layoutChanged();
 }
