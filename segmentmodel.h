@@ -24,7 +24,8 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 public slots:
     void populate(ParallelDownload *);
-    void update();
+    void updateProgress(qint64, qint64);
+    void updateState();
 private:
     ParallelDownload * dl = nullptr;
 signals:

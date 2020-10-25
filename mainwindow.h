@@ -25,7 +25,8 @@ private:
     DownloadManager *downloadManager;
     BaseDownload *currentDownload = nullptr;
     DownloadModel * downloadModel;
-    SegmentModel * segmentModel;
+    SegmentModel * segmentModel = nullptr;
+    QItemSelectionModel * slmd;
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();

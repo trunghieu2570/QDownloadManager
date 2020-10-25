@@ -2,7 +2,6 @@
 
 #include <QApplication>
 #include <QtCore>
-#include "paralleldownload.h"
 
 int main(int argc, char *argv[])
 {

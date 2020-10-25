@@ -19,7 +19,8 @@ QVariant SegmentModel::data(const QModelIndex &index, int role) const
     if ( role == Qt::DisplayRole)
     {
         Segment *_seg = dl->getSegmentList().at(index.row());
-        connect(_seg, &Segment::stateChanged, this, &SegmentModel::update);
+        connect(_seg, &Segment::segmentProgressChanged, this, &SegmentModel::updateProgress);
+        connect(_seg, &Segment::stateChanged, this, &SegmentModel::updateState);
         switch (index.column()) {
         case (int)SegmentTableColumns::ID:
             return QString::number(dl->getSegmentList().indexOf(_seg));
@@ -68,8 +69,17 @@ void SegmentModel::populate(ParallelDownload *pdl)
     endResetModel();
 }
 
-void SegmentModel::update()
+void SegmentModel::updateProgress(qint64, qint64)
 {
-    emit dataChanged(createIndex(0,0), createIndex(dl->getSegmentList().size(), columnCount()));
+    Segment *_seg = dynamic_cast<Segment*>(sender());
+    if (!_seg)
+        return;
+    int _index = dl->getSegmentList().indexOf(_seg);
+    emit dataChanged(createIndex(_index, (int) SegmentTableColumns::RECEIVED), createIndex(_index, (int) SegmentTableColumns::RECEIVED));
     //emit layoutChanged();
+}
+
+void SegmentModel::updateState()
+{
+
 }

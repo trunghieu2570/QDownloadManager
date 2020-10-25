@@ -1,7 +1,5 @@
 #include "segment.h"
 
-#include <QEventLoop>
-
 Segment::Segment(QObject *parent) : QObject(parent)
 {
 
@@ -45,6 +43,7 @@ void Segment::download()
     //state = SegmentState::PAUSED;
     //connect(reply, SIGNAL(finished()), &loop, SLOT(quit()));
     //loop.exec();
+    emit stateChanged();
 }
 
 void Segment::downloadFinished(QNetworkReply *data)
@@ -53,17 +52,14 @@ void Segment::downloadFinished(QNetworkReply *data)
         return;
     file->write(data->readAll());
     state = SegmentState::FINISHED;
-    emit finished();
+    //emit finished();
+    emit stateChanged();
     data->deleteLater();
     file->close();
-    //qDebug() << "finished:" << file->fileName();
 }
 
 void Segment::downloadProgress(qint64 rev, qint64 total)
 {
-    //qDebug() << "progress:" << file->fileName() << rev << total;
-    //this->total = total;
     this->received = rev;
-    emit stateChanged();
     emit segmentProgressChanged(rev, total);
 }

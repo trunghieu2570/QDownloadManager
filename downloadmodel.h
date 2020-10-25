@@ -6,6 +6,7 @@
 
 #include <QAbstractItemModel>
 #include <QObject>
+#include <QTimer>
 
 enum class DownloadTableColumns {
     FILE_NAME = 0,
@@ -29,9 +30,11 @@ public:
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
 public slots:
     void populate();
-    void update();
+    void progressUpdate();
+    void stateUpdate();
 private:
     DownloadManager *dm = nullptr;
+
 signals:
 
 };

@@ -3,6 +3,8 @@
 ParallelDownload::ParallelDownload(QObject *parent) : BaseDownload(parent)
 {
     fileInfo = new RemoteFileInfo();
+    timer = new QTimer();
+    connect(timer, &QTimer::timeout, this, &ParallelDownload::calculateProgress);
 }
 
 qint64 ParallelDownload::getSize() const
@@ -22,7 +24,6 @@ void ParallelDownload::prepare()
     fileInfo->setAddress(address);
     connect(fileInfo, &RemoteFileInfo::done, this, &ParallelDownload::getInfoFinished);
     fileInfo->startFetching();
-
 }
 
 QList<Segment *> ParallelDownload::getSegmentList()
@@ -32,29 +33,22 @@ QList<Segment *> ParallelDownload::getSegmentList()
 
 qint64 ParallelDownload::getDownloadedSize() const
 {
-    qint64 sum = 0;
-    foreach(Segment *p_seg, segmentList) {
-        sum += p_seg->getReceivedSize();
-    }
-    return sum;
+    return downloadedSize;
 }
 
 void ParallelDownload::generateSegments()
 {
-    //segmentList = QList<Segment*>();
     segmentList.clear();
-
+    //divide file size
     qint64 s_size = size / max;
 
     for (int i = 0; i < (max-1); i++) {
         QFile *dfile = new QFile(this->getName().append(".qpart").append(QString::number(i)));
         auto _seg = new Segment(address, dfile, i * s_size, (i + 1) * s_size - 1);
-        connect(_seg, &Segment::stateChanged, this, &ParallelDownload::emitDownloadProgressChange);
         segmentList.append(_seg);
     }
     QFile *dfile = new QFile(this->getName().append(".qpart").append(QString::number(max-1)));
     auto _seg = new Segment(address, dfile, (max-1) * s_size, size);
-    connect(_seg, &Segment::stateChanged, this, &ParallelDownload::emitDownloadProgressChange);
     segmentList.append(_seg);
 }
 
@@ -65,6 +59,7 @@ void ParallelDownload::start()
     qDebug() << "started";
     connect(this, &ParallelDownload::prepareFinished, this, &ParallelDownload::downloadSegments);
     this->prepare();
+    timer->start(1000);
 }
 
 void ParallelDownload::stop()
@@ -76,11 +71,6 @@ void ParallelDownload::stop()
 void ParallelDownload::pause()
 {
 //TODO
-    emit stateChanged();
-}
-
-void ParallelDownload::emitDownloadProgressChange()
-{
     emit stateChanged();
 }
 
@@ -97,10 +87,22 @@ void ParallelDownload::getInfoFinished()
     qDebug() << "prepared";
 }
 
+void ParallelDownload::calculateProgress()
+{
+    qint64 sum = 0;
+    foreach(Segment *p_seg, segmentList) {
+        sum += p_seg->getReceivedSize();
+    }
+    downloadedSize = sum;
+    if (downloadedSize > 0 && downloadedSize >= size)
+        timer->stop();
+    emit progressChanged();
+}
+
 void ParallelDownload::downloadSegments()
 {
     state = DownloadState::DOWNLOADING;
-    emit stateChanged();
+    //emit stateChanged();
     if (segmentList.size() <= 0)
     {
         qDebug() << "There aren't have any segments!";

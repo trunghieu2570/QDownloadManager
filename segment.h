@@ -24,7 +24,7 @@ private:
     QNetworkAccessManager qnam;
     QNetworkReply *reply;
     qint64 startPos, endPos;
-    qint64 received, total;
+    qint64 received = 0, total;
     SegmentState state = SegmentState::NONE;
 public slots:
     void download();

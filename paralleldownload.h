@@ -14,8 +14,9 @@ private:
     QList<Segment*> segmentList;
     QFile *file;
     int max = 8;
-    //qint64 downloadedSize;
+    qint64 downloadedSize = 0;
     RemoteFileInfo *fileInfo;
+    QTimer *timer = nullptr;
     void generateSegments();
     void downloadSegments();
     void prepare();
@@ -30,9 +31,9 @@ public slots:
     void start();
     void stop();
     void pause();
-    void emitDownloadProgressChange();
 private slots:
     void getInfoFinished();
+    void calculateProgress();
 signals:
     void prepareFinished();
 };

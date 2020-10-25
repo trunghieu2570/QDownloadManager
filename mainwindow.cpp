@@ -26,12 +26,10 @@ MainWindow::MainWindow(QWidget *parent)
     //setup download list table models
     downloadModel = new DownloadModel;
     ui->downloadTableView->setModel(downloadModel);
-    QItemSelectionModel * slmd = ui->downloadTableView->selectionModel();
+    slmd = ui->downloadTableView->selectionModel();
     connect(slmd, &QItemSelectionModel::selectionChanged, this, &MainWindow::downloadListSelectionChanged);
     downloadModel->populate();
-    //setup segment list table models
-    segmentModel = new SegmentModel;
-    ui->segProgressTableView->setModel(segmentModel);
+
 }
 
 MainWindow::~MainWindow()
@@ -68,16 +66,33 @@ void MainWindow::quitApplication()
 
 void MainWindow::downloadListSelectionChanged(QItemSelection selected, QItemSelection deselected)
 {
-    if(selected.indexes().size() <= 0)
-        return;
 
     QList<BaseDownload *> list = downloadManager->getDownloadList();
-    currentDownload = list.at(selected.indexes().first().row());
+
+    if (segmentModel) {
+        segmentModel->deleteLater();
+        segmentModel = nullptr;
+    }
+
+    if(slmd->selectedIndexes().size() <= 0) {
+        ui->tabWidget->hide();
+        return;
+    } else {
+        ui->tabWidget->show();
+    }
+
+
+
+    currentDownload = list.at(slmd->selectedIndexes().first().row());
 
     if (currentDownload)
     {
         if(currentDownload->getType() == DownloadType::PARALLEL_DOWNLOAD) {
+            ui->currentTaskLabel->setText(currentDownload->getName());
             ParallelDownload *_prld = dynamic_cast<ParallelDownload*>(currentDownload);
+            //setup segment list table models
+            segmentModel = new SegmentModel;
+            ui->segProgressTableView->setModel(segmentModel);
             segmentModel->populate(_prld);
             QList<Segment*> _segList = _prld->getSegmentList();
             QLayout *_layout =  ui->segProgressBarFrame->layout();

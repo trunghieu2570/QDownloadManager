@@ -2,6 +2,7 @@
 #define BASEDOWNLOAD_H
 
 #include <QObject>
+#include <QTimer>
 #include <QUrl>
 #include "downloadstate.h"
 #include "downloadtype.h"
@@ -37,6 +38,7 @@ public:
 
 signals:
     void stateChanged();
+    void progressChanged();
 
 };
 

@@ -21,7 +21,8 @@ QVariant DownloadModel::data(const QModelIndex &index, int role) const
     if ( role == Qt::DisplayRole)
     {
         auto base = dm->getDownloadList().at(index.row());
-        connect(base, &BaseDownload::stateChanged, this, &DownloadModel::update);
+        connect(base, &BaseDownload::progressChanged, this, &DownloadModel::progressUpdate);
+        connect(base, &BaseDownload::stateChanged, this, &DownloadModel::stateUpdate);
         if ( index.column() == (int)DownloadTableColumns::FILE_NAME)
             return base->getName();
         if ( index.column() == (int)DownloadTableColumns::QUEUE_NAME)
@@ -43,7 +44,7 @@ QVariant DownloadModel::data(const QModelIndex &index, int role) const
         }
         if ( index.column() == (int)DownloadTableColumns::DOWNLOADED) {
             QLocale locale = QLocale::system();
-            return "";
+            //return "";
             return locale.formattedDataSize(base->getDownloadedSize());
         }
 
@@ -94,8 +95,21 @@ void DownloadModel::populate()
     endResetModel();
 }
 
-void DownloadModel::update()
+void DownloadModel::progressUpdate()
 {
-    emit dataChanged(createIndex(0,0), createIndex(dm->getDownloadList().size(), columnCount()));
-    //emit layoutChanged();
+    BaseDownload *dl = dynamic_cast<BaseDownload*>(sender());
+    if (!dl)
+        return;
+    int _index = dm->getDownloadList().indexOf(dl);
+    emit dataChanged(createIndex(_index, (int) DownloadTableColumns::STATUS), createIndex(_index, (int) DownloadTableColumns::DOWNLOADED));
+        //emit dataChanged(createIndex(0, 0), createIndex(dm->getDownloadList().size(), columnCount()));
+}
+
+void DownloadModel::stateUpdate()
+{
+    BaseDownload *dl = dynamic_cast<BaseDownload*>(sender());
+    if (!dl)
+        return;
+    int _index = dm->getDownloadList().indexOf(dl);
+    emit dataChanged(createIndex(_index, 0), createIndex(_index, columnCount()));
 }
