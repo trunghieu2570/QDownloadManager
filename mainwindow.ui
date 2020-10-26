@@ -335,6 +335,7 @@
    </attribute>
    <addaction name="actionAddURL"/>
    <addaction name="actionResume"/>
+   <addaction name="actionPause"/>
    <addaction name="actionDelete"/>
    <addaction name="actionStop"/>
    <addaction name="actionScheduler"/>
@@ -436,6 +437,15 @@
   <action name="actionStop_queue">
    <property name="text">
     <string>Stop queue</string>
+   </property>
+  </action>
+  <action name="actionPause">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/icons8_pause_button_48px.png</normaloff>:/icons/icons/icons8_pause_button_48px.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pause</string>
    </property>
   </action>
  </widget>

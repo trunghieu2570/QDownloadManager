@@ -36,6 +36,8 @@ public:
 private slots:
     void openAddURLDialog();
     void openOptionsDialog();
+    void resumeDownload();
+    void pauseDownload();
     void quitApplication();
     void downloadListSelectionChanged(QItemSelection selected, QItemSelection deselected);
 

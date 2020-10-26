@@ -1,4 +1,9 @@
 #include "paralleldownload.h"
+#include <QJsonDocument>
+#include <QJsonValue>
+#include <QJsonArray>
+#include <QJsonObject>
+
 
 ParallelDownload::ParallelDownload(QObject *parent) : BaseDownload(parent)
 {
@@ -10,6 +15,14 @@ ParallelDownload::ParallelDownload(QObject *parent) : BaseDownload(parent)
 qint64 ParallelDownload::getSize() const
 {
     return fileInfo->getSize();
+}
+
+void ParallelDownload::loadInfo()
+{
+    size = 108007440;
+    if(size >= 0) {
+        generateSegments();
+    }
 }
 
 DownloadType ParallelDownload::getType() const
@@ -34,6 +47,11 @@ QList<Segment *> ParallelDownload::getSegmentList()
 qint64 ParallelDownload::getDownloadedSize() const
 {
     return downloadedSize;
+}
+
+QJsonObject ParallelDownload::toJson() const
+{
+    //return {"je":name};
 }
 
 void ParallelDownload::generateSegments()
@@ -76,12 +94,11 @@ void ParallelDownload::pause()
 
 void ParallelDownload::getInfoFinished()
 {
-    qint64 oldSize = this->size;
+    //qint64 oldSize = this->size;
     this->size = fileInfo->getSize();
     if(!fileInfo->isAcceptRanges()){
         max = 1;
     }
-    if (oldSize != this->size)
         generateSegments();
     emit prepareFinished();
     qDebug() << "prepared";

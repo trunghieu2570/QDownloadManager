@@ -54,3 +54,4 @@ QString BaseDownload::getDescription() const
 {
     return desciption;
 }
+

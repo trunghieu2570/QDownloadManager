@@ -46,9 +46,11 @@ void MainWindow::openAddURLDialog()
         QUrl url = QUrl::fromEncoded(add.toLocal8Bit());
         BaseDownload * dl = new ParallelDownload();
         dl->setAddress(url);
-        dl->setName(QString("file").append(QString::number(QRandomGenerator::global()->generate())).append(".exe"));
+//        dl->setName(QString("file").append(QString::number(QRandomGenerator::global()->generate())).append(".exe"));
+        dl->setName(QString("file").append(".exe"));
         downloadManager->addDownload(dl);
         downloadModel->populate();
+        dl->loadInfo();
         dl->start();
     }
 }
@@ -59,6 +61,20 @@ void MainWindow::openOptionsDialog()
     dialog->show();
 }
 
+void MainWindow::resumeDownload()
+{
+    foreach (auto _i, slmd->selectedIndexes()) {
+        QList<BaseDownload *> list = downloadManager->getDownloadList();
+        BaseDownload *_c = list.at(_i.row());
+        _c->start();
+    }
+}
+
+void MainWindow::pauseDownload()
+{
+
+}
+
 void MainWindow::quitApplication()
 {
     QCoreApplication::quit();
@@ -66,14 +82,12 @@ void MainWindow::quitApplication()
 
 void MainWindow::downloadListSelectionChanged(QItemSelection selected, QItemSelection deselected)
 {
-
-    QList<BaseDownload *> list = downloadManager->getDownloadList();
-
+    //disconnect signals and delete old table
     if (segmentModel) {
         segmentModel->deleteLater();
         segmentModel = nullptr;
     }
-
+    //hide if none is selected
     if(slmd->selectedIndexes().size() <= 0) {
         ui->tabWidget->hide();
         return;
@@ -82,7 +96,7 @@ void MainWindow::downloadListSelectionChanged(QItemSelection selected, QItemSele
     }
 
 
-
+    QList<BaseDownload *> list = downloadManager->getDownloadList();
     currentDownload = list.at(slmd->selectedIndexes().first().row());
 
     if (currentDownload)
@@ -90,10 +104,12 @@ void MainWindow::downloadListSelectionChanged(QItemSelection selected, QItemSele
         if(currentDownload->getType() == DownloadType::PARALLEL_DOWNLOAD) {
             ui->currentTaskLabel->setText(currentDownload->getName());
             ParallelDownload *_prld = dynamic_cast<ParallelDownload*>(currentDownload);
+
             //setup segment list table models
             segmentModel = new SegmentModel;
             ui->segProgressTableView->setModel(segmentModel);
             segmentModel->populate(_prld);
+
             QList<Segment*> _segList = _prld->getSegmentList();
             QLayout *_layout =  ui->segProgressBarFrame->layout();
             QLayoutItem *_child;

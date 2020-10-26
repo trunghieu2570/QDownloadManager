@@ -23,14 +23,16 @@ private:
     QFile *file;
     QNetworkAccessManager qnam;
     QNetworkReply *reply;
-    qint64 startPos, endPos;
+    qint64 startPos, endPos, currentPos;
     qint64 received = 0, total;
     SegmentState state = SegmentState::NONE;
 public slots:
     void download();
+    void stop();
 private slots:
     void downloadFinished(QNetworkReply*);
     void downloadProgress(qint64, qint64);
+    void dataReadyRead();
 signals:
     void finished();
     void segmentProgressChanged(qint64, qint64);

@@ -17,7 +17,7 @@ protected:
     QString saveLocation;
     DownloadState state;
     QString desciption;
-    qint64 size;
+    qint64 size = -1;
 public:
     virtual qint64 getSize() const = 0;
     virtual qint64 getDownloadedSize() const = 0;
@@ -30,6 +30,8 @@ public:
     virtual void start() = 0;
     virtual void pause() = 0;
     virtual void stop() = 0;
+    virtual QJsonObject toJson() const = 0;
+    virtual void loadInfo() = 0;
     void setName(const QString &value);
     void setAddress(const QUrl &value);
     void setSaveLocation(const QString &value);
