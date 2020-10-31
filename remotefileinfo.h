@@ -12,9 +12,9 @@ public:
     explicit RemoteFileInfo(QObject *parent = nullptr);
     qint64 getSize();
     bool isAcceptRanges();
-    void setAddress(const QUrl &value);
+    void setAddress(const QString &value);
 protected:
-    QUrl address;
+    QString address;
     qint64 size = 0;
     QNetworkAccessManager qnam;
     QNetworkReply *reply;

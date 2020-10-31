@@ -13,16 +13,17 @@ class Segment : public QObject
     Q_OBJECT
 public:
     explicit Segment(QObject *parent = nullptr);
-    Segment(const QUrl&, QFile *, qint64, qint64);
+    Segment(const QString &, QFile *, qint64, qint64);
     SegmentState getCurrentState();
     qint64 getReceivedSize() const;
     qint64 getTotalSize() const;
+    QFile *getFile() const;
 
 private:
-    QUrl address;
+    QString address;
     QFile *file;
     QNetworkAccessManager qnam;
-    QNetworkReply *reply;
+    QNetworkReply *reply = nullptr;
     qint64 startPos, endPos, currentPos;
     qint64 received = 0, total;
     SegmentState state = SegmentState::NONE;
@@ -30,7 +31,7 @@ public slots:
     void download();
     void stop();
 private slots:
-    void downloadFinished(QNetworkReply*);
+    void downloadFinished();
     void downloadProgress(qint64, qint64);
     void dataReadyRead();
 signals:

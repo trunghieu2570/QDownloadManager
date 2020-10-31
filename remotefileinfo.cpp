@@ -15,14 +15,15 @@ bool RemoteFileInfo::isAcceptRanges()
     return acceptRanges;
 }
 
-void RemoteFileInfo::setAddress(const QUrl &value)
+void RemoteFileInfo::setAddress(const QString &value)
 {
     address = value;
 }
 
 void RemoteFileInfo::startFetching()
 {
-    QNetworkRequest req(address);
+    QUrl url = QUrl::fromEncoded(address.toLocal8Bit());
+    QNetworkRequest req(url);
     reply = qnam.head(req);
     connect(reply, &QNetworkReply::finished, this, &RemoteFileInfo::fetchFinished);
 }
@@ -45,6 +46,7 @@ void RemoteFileInfo::fetchFinished()
     }
 
     size = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
+    qDebug() << "done";
     emit done();
-        reply->deleteLater();
+    reply->deleteLater();
 }

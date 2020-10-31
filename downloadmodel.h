@@ -34,9 +34,8 @@ public slots:
     void stateUpdate();
 private:
     DownloadManager *dm = nullptr;
-
 signals:
-
+    void tableUpdate();
 };
 
 #endif // DOWNLOADMODEL_H

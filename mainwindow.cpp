@@ -1,6 +1,10 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+
 
 BaseDownload *MainWindow::getCurrentDownload() const
 {
@@ -21,15 +25,18 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->actionAddURL, &QAction::triggered, this, &MainWindow::openAddURLDialog);
     connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
     connect(ui->actionQuit, &QAction::triggered, this, &MainWindow::quitApplication);
+    connect(ui->actionPause, &QAction::triggered, this, &MainWindow::pauseDownload);
+    connect(ui->actionResume, &QAction::triggered, this, &MainWindow::resumeDownload);
     //get download manager instance
     downloadManager = DownloadManager::getInstance();
     //setup download list table models
     downloadModel = new DownloadModel;
+    connect(downloadModel, &DownloadModel::tableUpdate, this, &MainWindow::saveList);
     ui->downloadTableView->setModel(downloadModel);
     slmd = ui->downloadTableView->selectionModel();
     connect(slmd, &QItemSelectionModel::selectionChanged, this, &MainWindow::downloadListSelectionChanged);
     downloadModel->populate();
-
+    loadList();
 }
 
 MainWindow::~MainWindow()
@@ -42,16 +49,16 @@ void MainWindow::openAddURLDialog()
     NewDLDialog *dialog = new NewDLDialog();
     if (dialog->exec() == QDialog::Accepted) {
         //if Ok button was clicked
-        QString add = dialog->getUrl();
-        QUrl url = QUrl::fromEncoded(add.toLocal8Bit());
+        QString _address = dialog->getUrl();
         BaseDownload * dl = new ParallelDownload();
-        dl->setAddress(url);
-//        dl->setName(QString("file").append(QString::number(QRandomGenerator::global()->generate())).append(".exe"));
-        dl->setName(QString("file").append(".exe"));
+        dl->setAddress(_address);
+        dl->setName(QString("file").append(QString::number(QRandomGenerator::global()->generate())).append(".exe"));
+//        dl->setName(QString("file").append(".exe"));
         downloadManager->addDownload(dl);
         downloadModel->populate();
         dl->loadInfo();
         dl->start();
+        saveList();
     }
 }
 
@@ -63,7 +70,8 @@ void MainWindow::openOptionsDialog()
 
 void MainWindow::resumeDownload()
 {
-    foreach (auto _i, slmd->selectedIndexes()) {
+    qDebug() << "resume";
+    foreach (auto _i, slmd->selectedRows()) {
         QList<BaseDownload *> list = downloadManager->getDownloadList();
         BaseDownload *_c = list.at(_i.row());
         _c->start();
@@ -72,7 +80,11 @@ void MainWindow::resumeDownload()
 
 void MainWindow::pauseDownload()
 {
-
+    foreach (auto _i, slmd->selectedRows()) {
+        QList<BaseDownload *> list = downloadManager->getDownloadList();
+        BaseDownload *_c = list.at(_i.row());
+        _c->pause();
+    }
 }
 
 void MainWindow::quitApplication()
@@ -140,5 +152,57 @@ void MainWindow::downloadListSelectionChanged(QItemSelection selected, QItemSele
             }
         }
     }
+}
+
+bool MainWindow::saveList() const
+{
+    QFile saveFile(QStringLiteral("save.json"));
+    if (!saveFile.open(QIODevice::WriteOnly)) {
+        qWarning("Couldn't open save file.");
+        return false;
+    }
+
+    QJsonObject _jsonObject;
+
+    QJsonArray _dlJsonArray;
+    foreach (const BaseDownload *_dl, downloadManager->getDownloadList()) {
+        QJsonObject _dlObject;
+        _dl->writeJson(_dlObject);
+        _dlJsonArray.append(_dlObject);
+    }
+    _jsonObject["downloads"] = _dlJsonArray;
+    QJsonDocument saveDoc(_jsonObject);
+    saveFile.write(saveDoc.toJson());
+    return true;
+}
+
+bool MainWindow::loadList()
+{
+    QFile loadFile(QStringLiteral("save.json"));
+    if (!loadFile.open(QIODevice::ReadOnly)) {
+        qWarning("Couldn't open load file.");
+        return false;
+    }
+
+    QByteArray saveData = loadFile.readAll();
+
+    QJsonDocument loadDoc(QJsonDocument::fromJson(saveData));
+
+    QJsonArray loadArray = loadDoc.object()["downloads"].toArray();
+    for (int i = 0; i < loadArray.size(); i++) {
+        QJsonObject _dlObj = loadArray.at(i).toObject();
+        ParallelDownload * dl = new ParallelDownload();
+        dl->setAddress(_dlObj["address"].toString());
+        dl->setName(_dlObj["name"].toString());
+        dl->setSaveLocation(_dlObj["saveLocation"].toString());
+        dl->setSize(_dlObj["size"].toVariant().toLongLong());
+        dl->setDescription(_dlObj["description"].toString());
+        dl->setState((DownloadState) _dlObj["state"].toInt());
+        dl->checkFileExist();
+        downloadManager->addDownload(dl);
+        downloadModel->populate();
+    }
+
+    return true;
 }
 

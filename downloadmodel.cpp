@@ -34,11 +34,27 @@ QVariant DownloadModel::data(const QModelIndex &index, int role) const
         if ( index.column() == (int)DownloadTableColumns::STATUS) {
             if (base->getType() == DownloadType::PARALLEL_DOWNLOAD) {
                 auto para = dynamic_cast<ParallelDownload*>(base);
-                if (para->getDownloadedSize() <= 0 || para->getDownloadedSize() > para->getSize())
-                    return "0%";
-                if (para->getDownloadedSize() == para->getSize())
+                switch (para->getCurrentState()) {
+                case DownloadState::PREPARING:
+                    return "Preparing...";
+                case DownloadState::DOWNLOADING:
+                {
+                    //                    if (para->getDownloadedSize() <= 0 || para->getDownloadedSize() > para->getSize())
+                    //                        return "0%";
+                    //return "";
+                    return QString("%1\%").arg(QString::number(para->getDownloadedSize() * 100 / (para->getSize())));
+                }
+                case DownloadState::PAUSED:
+                    return "Paused";
+                case DownloadState::ERROR:
+                    return "Error";
+                case DownloadState::WRITING:
+                    return "Writing...";
+                case DownloadState::FINISHED:
                     return "Finished";
-                return QString("%1\%").arg(QString::number(para->getDownloadedSize() * 100 / (para->getSize())));
+                default:
+                    return "";
+                }
             }
             return "";
         }
@@ -53,7 +69,7 @@ QVariant DownloadModel::data(const QModelIndex &index, int role) const
         if ( index.column() == (int)DownloadTableColumns::LAST_TIME)
             return "";
         if ( index.column() == (int)DownloadTableColumns::DESCRIPTION)
-            return "description";
+            return base->getDescription();
     }
     return QVariant();
 }
@@ -102,7 +118,7 @@ void DownloadModel::progressUpdate()
         return;
     int _index = dm->getDownloadList().indexOf(dl);
     emit dataChanged(createIndex(_index, (int) DownloadTableColumns::STATUS), createIndex(_index, (int) DownloadTableColumns::DOWNLOADED));
-        //emit dataChanged(createIndex(0, 0), createIndex(dm->getDownloadList().size(), columnCount()));
+    //emit dataChanged(createIndex(0, 0), createIndex(dm->getDownloadList().size(), columnCount()));
 }
 
 void DownloadModel::stateUpdate()
@@ -112,4 +128,5 @@ void DownloadModel::stateUpdate()
         return;
     int _index = dm->getDownloadList().indexOf(dl);
     emit dataChanged(createIndex(_index, 0), createIndex(_index, columnCount()));
+    emit tableUpdate();
 }

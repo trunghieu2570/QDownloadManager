@@ -40,6 +40,8 @@ private slots:
     void pauseDownload();
     void quitApplication();
     void downloadListSelectionChanged(QItemSelection selected, QItemSelection deselected);
+    bool saveList() const;
+    bool loadList();
 
 private:
     Ui::MainWindow *ui;

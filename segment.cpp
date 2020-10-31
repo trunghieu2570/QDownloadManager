@@ -5,7 +5,7 @@ Segment::Segment(QObject *parent) : QObject(parent)
 
 }
 
-Segment::Segment(const QUrl &address, QFile *file, qint64 start, qint64 end)
+Segment::Segment(const QString &address, QFile *file, qint64 start, qint64 end)
 {
     this->file = file;
     this->startPos = start;
@@ -13,7 +13,7 @@ Segment::Segment(const QUrl &address, QFile *file, qint64 start, qint64 end)
     this->address = address;
     this->total = end - start + 1;
     this->received = file->size();
-    QObject::connect(&qnam, SIGNAL(finished(QNetworkReply*)),this, SLOT(downloadFinished(QNetworkReply*)));
+//    QObject::connect(&qnam, SIGNAL(finished(QNetworkReply*)),this, SLOT(downloadFinished(QNetworkReply*)));
 }
 
 SegmentState Segment::getCurrentState()
@@ -31,11 +31,17 @@ qint64 Segment::getTotalSize() const
     return total;
 }
 
+QFile *Segment::getFile() const
+{
+    return file;
+}
+
 void Segment::download()
 {
     //open file to append data
     if (!file->open(QIODevice::Append))
         return;
+    qDebug() << "open" << file->fileName();
     //clear if the file is oversized
     if(file->size() > total)
     {
@@ -48,35 +54,57 @@ void Segment::download()
     received = file->size();
     currentPos += received;
     //skip if the file is already completed
-    if (currentPos >= endPos)
+    if (currentPos >= endPos) {
+        downloadFinished();
         return;
+    }
 
     //create request
-    QNetworkRequest request(address);
+    QUrl url = QUrl::fromEncoded(address.toLocal8Bit());
+    QNetworkRequest request(url);
     request.setAttribute(QNetworkRequest::HttpPipeliningAllowedAttribute, true);
     request.setRawHeader("Range", QString("bytes=%1-%2").arg(QString::number(currentPos), QString::number(endPos)).toLocal8Bit());
 
     //start download
     reply = qnam.get(request);
+    //change to DOWNLOADING state
+    state = SegmentState::DOWNLOADING;
+    emit stateChanged();
+
+    connect(reply, &QNetworkReply::finished, this, &Segment::downloadFinished);
     connect(reply, &QNetworkReply::downloadProgress, this, &Segment::downloadProgress);
     connect(reply, &QNetworkReply::readyRead, this, &Segment::dataReadyRead);
 
-    //change to DOWNLOADING state
-    emit stateChanged();
+
 }
 
 void Segment::stop()
 {
-    downloadFinished(reply);
+    if (reply) {
+        reply->abort();
+    }
+    //downloadFinished(reply);
 }
 
-void Segment::downloadFinished(QNetworkReply *data)
+void Segment::downloadFinished()
 {
-    state = SegmentState::FINISHED;
+    if (currentPos >= endPos)
+        state = SegmentState::FINISHED;
+    else
+        state = SegmentState::PAUSED;
     //emit finished();
     emit stateChanged();
-    data->deleteLater();
-    file->close();
+
+    if (reply) {
+        reply->deleteLater();
+        reply = nullptr;
+    }
+
+    if (file->isOpen()) {
+        file->close();
+    }
+
+    qDebug() << "close" << file->fileName();
 }
 
 void Segment::downloadProgress(qint64 rev, qint64 _total)
@@ -87,5 +115,6 @@ void Segment::downloadProgress(qint64 rev, qint64 _total)
 
 void Segment::dataReadyRead()
 {
+    qDebug() << reply->size();
     file->write(reply->readAll());
 }

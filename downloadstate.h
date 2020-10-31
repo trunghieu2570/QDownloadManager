@@ -3,10 +3,10 @@
 enum class DownloadState {
     NONE,
     PREPARING,
-    STARTED,
     PAUSED,
     DOWNLOADING,
     ERROR,
+    WRITING,
     FINISHED
 };
 #endif // DOWNLOADSTATE_H

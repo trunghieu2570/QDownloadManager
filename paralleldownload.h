@@ -17,7 +17,6 @@ private:
     qint64 downloadedSize = 0;
     RemoteFileInfo *fileInfo;
     QTimer *timer = nullptr;
-    QJsonObject toJson() const;
     void generateSegments();
     void downloadSegments();
     void prepare();
@@ -29,6 +28,9 @@ public:
     qint64 getDownloadedSize() const;
     qint64 getSize() const;
     void loadInfo();
+    void writeFile();
+    void writeJson(QJsonObject &json) const;
+    bool checkFileExist();
 public slots:
     void start();
     void stop();

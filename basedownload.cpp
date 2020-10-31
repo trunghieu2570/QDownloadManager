@@ -5,14 +5,19 @@ BaseDownload::BaseDownload(QObject *parent): QObject(parent)
 
 }
 
-QString BaseDownload::getDesciption() const
+void BaseDownload::setState(const DownloadState &value)
 {
-    return desciption;
+    state = value;
 }
 
-void BaseDownload::setDesciption(const QString &value)
+void BaseDownload::setSize(const qint64 &value)
 {
-    desciption = value;
+    size = value;
+}
+
+void BaseDownload::setDescription(const QString &value)
+{
+    description = value;
 }
 
 void BaseDownload::setSaveLocation(const QString &value)
@@ -20,7 +25,7 @@ void BaseDownload::setSaveLocation(const QString &value)
     saveLocation = value;
 }
 
-void BaseDownload::setAddress(const QUrl &value)
+void BaseDownload::setAddress(const QString &value)
 {
     address = value;
 }
@@ -35,7 +40,7 @@ QString BaseDownload::getName() const
     return name;
 }
 
-QUrl BaseDownload::getAddress() const
+QString BaseDownload::getAddress() const
 {
     return address;
 }
@@ -52,6 +57,6 @@ DownloadState BaseDownload::getCurrentState() const
 
 QString BaseDownload::getDescription() const
 {
-    return desciption;
+    return description;
 }
 
