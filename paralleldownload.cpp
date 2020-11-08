@@ -7,10 +7,9 @@
 
 ParallelDownload::ParallelDownload(QObject *parent) : BaseDownload(parent)
 {
-    fileInfo = new RemoteFileInfo();
+    //rfInfo = new RemoteFileInfo();
     timer = new QTimer();
     connect(timer, &QTimer::timeout, this, &ParallelDownload::calculateProgress);
-    connect(fileInfo, &RemoteFileInfo::done, this, &ParallelDownload::getInfoFinished);
     connect(this, &ParallelDownload::prepareFinished, this, &ParallelDownload::downloadSegments);
 }
 
@@ -64,9 +63,8 @@ void ParallelDownload::prepare()
 {
     //state = DownloadState::PREPARING;
     //emit stateChanged();
-    fileInfo->setAddress(address);
-
-    fileInfo->startFetching();
+    rfInfo->setAddress(address);
+    rfInfo->startFetching();
 }
 
 QList<Segment *> ParallelDownload::getSegmentList()
@@ -98,6 +96,12 @@ bool ParallelDownload::checkFileExist()
         return true;
     }
     return false;
+}
+
+void ParallelDownload::setRemoteInfo(RemoteFileInfo *value)
+{
+    rfInfo = value;
+    connect(rfInfo, &RemoteFileInfo::done, this, &ParallelDownload::getInfoFinished);
 }
 
 void ParallelDownload::generateSegments()
@@ -151,8 +155,8 @@ void ParallelDownload::getInfoFinished()
 {
     //qint64 oldSize = this->size;
     qDebug() << "finishInfoGet";
-    this->size = fileInfo->getSize();
-    if(!fileInfo->isAcceptRanges()){
+    this->size = rfInfo->getSize();
+    if(!rfInfo->isAcceptRanges()){
         max = 1;
     }
     generateSegments();

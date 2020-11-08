@@ -13,12 +13,16 @@ public:
     qint64 getSize();
     bool isAcceptRanges();
     void setAddress(const QString &value);
+
+    QString getAddress() const;
+    QString getFinalAddress() const;
 protected:
     QString address;
-    qint64 size = 0;
+    QString finalAddress;
+    qint64 size;
     QNetworkAccessManager qnam;
     QNetworkReply *reply;
-    bool acceptRanges = false;
+    bool acceptRanges;
 public slots:
     void startFetching();
 private slots:

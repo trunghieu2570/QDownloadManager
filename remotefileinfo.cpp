@@ -20,12 +20,23 @@ void RemoteFileInfo::setAddress(const QString &value)
     address = value;
 }
 
+QString RemoteFileInfo::getAddress() const
+{
+    return address;
+}
+
+QString RemoteFileInfo::getFinalAddress() const
+{
+    return finalAddress;
+}
+
 void RemoteFileInfo::startFetching()
 {
     QUrl url = QUrl::fromEncoded(address.toLocal8Bit());
     QNetworkRequest req(url);
-    reply = qnam.head(req);
-    connect(reply, &QNetworkReply::finished, this, &RemoteFileInfo::fetchFinished);
+    req.setAttribute(QNetworkRequest::FollowRedirectsAttribute, true);
+    reply = qnam.get(req);
+    connect(reply, &QNetworkReply::readyRead, this, &RemoteFileInfo::fetchFinished);
 }
 
 void RemoteFileInfo::fetchFinished()
@@ -47,6 +58,8 @@ void RemoteFileInfo::fetchFinished()
 
     size = reply->header(QNetworkRequest::ContentLengthHeader).toInt();
     qDebug() << "done";
-    emit done();
+    reply->abort();
     reply->deleteLater();
+    reply = nullptr;
+    emit done();
 }

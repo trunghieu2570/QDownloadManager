@@ -2,6 +2,11 @@
 #define DOWNLOADMANAGER_H
 
 #include <QObject>
+#include <QFile>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonObject>
+
 #include "basedownload.h"
 
 class DownloadManager : public QObject
@@ -19,6 +24,8 @@ public slots:
     void startAll();
     void stopAll();
     void pauseAll();
+    bool saveList() const;
+    bool loadList();
 signals:
 
 };

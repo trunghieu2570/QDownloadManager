@@ -15,7 +15,7 @@ private:
     QFile *file;
     int max = 8;
     qint64 downloadedSize = 0;
-    RemoteFileInfo *fileInfo;
+    RemoteFileInfo *rfInfo;
     QTimer *timer = nullptr;
     void generateSegments();
     void downloadSegments();
@@ -31,6 +31,8 @@ public:
     void writeFile();
     void writeJson(QJsonObject &json) const;
     bool checkFileExist();
+    void setRemoteInfo(RemoteFileInfo *value);
+
 public slots:
     void start();
     void stop();

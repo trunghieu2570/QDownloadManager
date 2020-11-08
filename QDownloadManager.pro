@@ -10,6 +10,7 @@ CONFIG += c++11
 
 SOURCES += \
     basedownload.cpp \
+    downloadfileinfodialog.cpp \
     downloadmanager.cpp \
     downloadmodel.cpp \
     main.cpp \
@@ -23,6 +24,7 @@ SOURCES += \
 
 HEADERS += \
     basedownload.h \
+    downloadfileinfodialog.h \
     downloadmanager.h \
     downloadmodel.h \
     downloadstate.h \
@@ -37,6 +39,7 @@ HEADERS += \
     segmentstate.h
 
 FORMS += \
+    downloadfileinfodialog.ui \
     mainwindow.ui \
     newdldialog.ui \
     optionsdialog.ui

@@ -10,7 +10,6 @@
 #include "downloadmodel.h"
 #include "segmentmodel.h"
 #include <QProgressBar>
-#include <QRandomGenerator>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -36,12 +35,11 @@ public:
 private slots:
     void openAddURLDialog();
     void openOptionsDialog();
+    void addDownload(BaseDownload *dl);
     void resumeDownload();
     void pauseDownload();
     void quitApplication();
     void downloadListSelectionChanged(QItemSelection selected, QItemSelection deselected);
-    bool saveList() const;
-    bool loadList();
 
 private:
     Ui::MainWindow *ui;

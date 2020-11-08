@@ -39,9 +39,8 @@ QVariant DownloadModel::data(const QModelIndex &index, int role) const
                     return "Preparing...";
                 case DownloadState::DOWNLOADING:
                 {
-                    //                    if (para->getDownloadedSize() <= 0 || para->getDownloadedSize() > para->getSize())
-                    //                        return "0%";
-                    //return "";
+                    if (para->getSize() <= 0)
+                        return "";
                     return QString("%1\%").arg(QString::number(para->getDownloadedSize() * 100 / (para->getSize())));
                 }
                 case DownloadState::PAUSED:
